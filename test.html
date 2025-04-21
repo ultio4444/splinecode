@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>100% Self‑Hosted Spline</title>
+  <style>
+    /* 기본 스타일 초기화 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    spline-viewer {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    /* Spline 내부 요소 초기화 */
+    canvas {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #container {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #logo {
+      display: none !important;
+    }
+  </style>
+
+  <!-- Spline Viewer 스크립트 -->
+  <script type="module" src="./libs/spline-viewer.js"></script>
+</head>
+<body>
+
+  <!-- Spline Viewer 컴포넌트 -->
+  <spline-viewer
+  id="viewer"
+  url="./scene.splinecode"
+  loading="eager"
+  events-target="global"
+  style="display:block; width:100vw; height:100vh; position:fixed; top:0; left:0; z-index:0;">
+</spline-viewer>
+
+<style>
+  /* 내부 canvas도 강제 리셋 */
+  spline-viewer::part(canvas),
+  canvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    display: block !important;
+  }
+
+  /* 로고 제거 */
+  spline-viewer::part(branding),
+  #logo {
+    display: none !important;
+  }
+
+  /* 혹시 있을지도 모를 preloader 제거 */
+  .preloader {
+    display: none !important;
+  }
+</style>
+
+<script type="module">
+  const viewer = document.getElementById('viewer');
+
+  viewer.addEventListener('load', () => {
+    const obj = viewer.scene.getObjectByName('Cube Clones'); // 정확한 이름 확인 필요
+
+    if (!obj) {
+      console.warn('🚫 "Cube Clones" 오브젝트를 찾지 못했습니다. 정확한 이름인지 확인하세요.');
+      return;
+    }
+
+    const rotateWithMouse = (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      obj.rotation.y = x * Math.PI;
+      obj.rotation.x = y * Math.PI;
+    };
+
+    // 마우스 움직임 따라 회전
+    window.addEventListener('mousemove', rotateWithMouse);
+  });
+</script>
+
+</body>
+</html>
